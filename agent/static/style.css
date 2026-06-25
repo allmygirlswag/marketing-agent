@@ -1,0 +1,259 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1500px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+}
+
+h1 {
+    color: #1a1a2e;
+    font-size: 2.5em;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #6c7a89;
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+button {
+    background: #e94560;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+button:hover:not(:disabled) {
+    background: #c81e45;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+}
+
+button:disabled {
+    background: #d4d9e2;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ========== АНИМАЦИИ ДЛЯ КАРТОЧЕК ========== */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.summary {
+    display: none;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.summary.visible {
+    display: flex;
+}
+
+.summary-card {
+    background: #f8fafc;
+    padding: 15px 20px;
+    border-radius: 12px;
+    border-left: 4px solid #16213e;
+    flex: 1;
+    min-width: 120px;
+    opacity: 0;
+    animation: slideUp 0.6s ease forwards;
+}
+
+/* Задержки для каждой карточки */
+.summary-card:nth-child(1) { animation-delay: 0.05s; }
+.summary-card:nth-child(2) { animation-delay: 0.10s; }
+.summary-card:nth-child(3) { animation-delay: 0.15s; }
+.summary-card:nth-child(4) { animation-delay: 0.20s; }
+.summary-card:nth-child(5) { animation-delay: 0.25s; }
+.summary-card:nth-child(6) { animation-delay: 0.30s; }
+
+.summary-card h3 {
+    color: #6c7a89;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-card p {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.summary-card:first-child {
+    border-left-color: #e94560;
+}
+
+.summary-card:nth-child(2) {
+    border-left-color: #16213e;
+}
+
+.summary-card:nth-child(3) {
+    border-left-color: #0f3460;
+}
+
+.summary-card:nth-child(4) {
+    border-left-color: #2ecc71;
+}
+
+.summary-card:nth-child(5) {
+    border-left-color: #e74c3c;
+}
+
+.summary-card:nth-child(6) {
+    border-left-color: #f39c12;
+}
+
+/* ========== АНИМАЦИЯ ДЛЯ СТРОК ТАБЛИЦЫ ========== */
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+thead {
+    background: #1a1a2e;
+    color: white;
+}
+
+th {
+    padding: 14px 10px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+/* Анимация для строк таблицы */
+tbody tr {
+    opacity: 0;
+    animation: fadeInRow 0.4s ease forwards;
+}
+
+tbody tr:nth-child(1) { animation-delay: 0.02s; }
+tbody tr:nth-child(2) { animation-delay: 0.06s; }
+tbody tr:nth-child(3) { animation-delay: 0.10s; }
+tbody tr:nth-child(4) { animation-delay: 0.14s; }
+tbody tr:nth-child(5) { animation-delay: 0.18s; }
+tbody tr:nth-child(6) { animation-delay: 0.22s; }
+tbody tr:nth-child(7) { animation-delay: 0.26s; }
+tbody tr:nth-child(8) { animation-delay: 0.30s; }
+tbody tr:nth-child(9) { animation-delay: 0.34s; }
+tbody tr:nth-child(10) { animation-delay: 0.38s; }
+
+tr:hover {
+    background: #f8fafc;
+}
+
+.budget {
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+/* Цвета для действий */
+.action-increase {
+    color: #2ecc71;
+    font-weight: 600;
+}
+
+.action-decrease {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.action-neutral {
+    color: #6c7a89;
+    font-weight: 500;
+}
+
+.hint {
+    color: #a0aec0;
+    text-align: center;
+    padding: 40px;
+    font-size: 1.1em;
+}
+
+/* Адаптация под мобильные */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    table {
+        font-size: 0.7em;
+    }
+    th, td {
+        padding: 6px 5px;
+    }
+    .summary-card {
+        min-width: 80px;
+        padding: 10px 15px;
+    }
+    .summary-card p {
+        font-size: 1em;
+    }
+}

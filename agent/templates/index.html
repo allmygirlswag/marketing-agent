@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Агент маркетолог</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Агент маркетолог</h1>
+        <p class="subtitle">Автоматическая оптимизация рекламного бюджета</p>
+        
+        <div class="controls">
+            <button onclick="loadData()">📊 Загрузить данные</button>
+            <button onclick="optimize()" id="optimizeBtn" disabled>Запустить оптимизацию</button>
+        </div>
+
+        <div id="summary" class="summary">
+            <div class="summary-card">
+                <h3>💰 Общий бюджет</h3>
+                <p id="totalBudget">0 ₽</p>
+            </div>
+            <div class="summary-card">
+                <h3>🔄 Перераспределено</h3>
+                <p id="budgetMoved">0 ₽</p>
+            </div>
+            <div class="summary-card">
+                <h3>📈 Увеличено</h3>
+                <p id="increased">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>📉 Снижено</h3>
+                <p id="decreased">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>🎯 Оптимизировано</h3>
+                <p id="optimizedCount">0</p>
+            </div>
+        </div>
+
+        <div id="tableContainer">
+            <p class="hint">Нажмите "Загрузить данные", чтобы начать</p>
+        </div>
+    </div>
+
+    <script>
+        let campaignsData = [];
+
+        async function loadData() {
+            try {
+                const response = await fetch('/api/campaigns');
+                campaignsData = await response.json();
+                renderTable(campaignsData);
+                document.getElementById('optimizeBtn').disabled = false;
+                document.getElementById('summary').classList.remove('visible');
+                document.getElementById('summary').style.display = 'none';
+            } catch (error) {
+                alert('Ошибка загрузки данных: ' + error);
+            }
+        }
+
+        function renderTable(data) {
+            let html = `
+                <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Кампания</th>
+                            <th>Площадка</th>
+                            <th>Бюджет (₽)</th>
+                            <th>Расход (₽)</th>
+                            <th>Показы</th>
+                            <th>Клики</th>
+                            <th>Конверсии</th>
+                            <th>CPC (₽)</th>
+                            <th>CPA (₽)</th>
+                            <th>CPM (₽)</th>
+                            <th>CTR (%)</th>
+                            <th>Конверсия (%)</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            data.forEach(c => {
+                let actionClass = 'action-neutral';
+                if (c.action && c.action.includes('увеличен')) {
+                    actionClass = 'action-increase';
+                } else if (c.action && c.action.includes('снижен')) {
+                    actionClass = 'action-decrease';
+                }
+                
+                html += `
+                    <tr>
+                        <td><strong>${c.campaign}</strong></td>
+                        <td>${c.platform}</td>
+                        <td class="budget">${Math.round(c.budget).toLocaleString()}</td>
+                        <td>${Math.round(c.spend).toLocaleString()}</td>
+                        <td>${Math.round(c.impressions).toLocaleString()}</td>
+                        <td>${Math.round(c.clicks).toLocaleString()}</td>
+                        <td>${Math.round(c.conversions).toLocaleString()}</td>
+                        <td>${c.cpc ? Math.round(c.cpc).toLocaleString() : '-'}</td>
+                        <td>${c.cpa ? Math.round(c.cpa).toLocaleString() : '-'}</td>
+                        <td>${c.cpm ? Math.round(c.cpm).toLocaleString() : '-'}</td>
+                        <td>${c.ctr ? c.ctr.toFixed(2) : '-'}</td>
+                        <td>${c.conversion_rate ? c.conversion_rate.toFixed(2) : '-'}</td>
+                        <td class="${actionClass}">${c.action || '⏳ Ожидание'}</td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table></div>`;
+            document.getElementById('tableContainer').innerHTML = html;
+        }
+
+        async function optimize() {
+            if (campaignsData.length === 0) {
+                alert('Сначала загрузите данные!');
+                return;
+            }
+
+            document.getElementById('optimizeBtn').disabled = true;
+            document.getElementById('optimizeBtn').textContent = '⏳ Оптимизация...';
+
+            try {
+                const response = await fetch('/api/optimize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ campaigns: campaignsData })
+                });
+
+                const result = await response.json();
+                
+                campaignsData = result.campaigns;
+                renderTable(campaignsData);
+
+                const summary = document.getElementById('summary');
+                summary.style.display = 'flex';
+                summary.classList.remove('visible');
+                setTimeout(() => {
+                    summary.classList.add('visible');
+                }, 50);
+                
+                document.getElementById('totalBudget').textContent = Math.round(result.summary.total_budget).toLocaleString() + ' ₽';
+                document.getElementById('budgetMoved').textContent = Math.round(result.summary.budget_moved).toLocaleString() + ' ₽';
+                document.getElementById('increased').textContent = result.summary.increased;
+                document.getElementById('decreased').textContent = result.summary.decreased;
+                document.getElementById('optimizedCount').textContent = result.summary.campaigns_optimized;
+
+            } catch (error) {
+                alert('Ошибка оптимизации: ' + error);
+            } finally {
+                document.getElementById('optimizeBtn').disabled = false;
+                document.getElementById('optimizeBtn').textContent = '🚀 Запустить оптимизацию';
+            }
+        }
+    </script>
+</body>
+</html>
